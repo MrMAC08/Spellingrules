@@ -217,20 +217,20 @@
         <div class="setup-section">
             <h3>1. Select Your Target Rule Unit:</h3>
             <div class="grid-options">
-                <div class="selectable-card" onclick="selectRule('rule_silente')">Silent 'e' Suffix Rule (List 44)</div>
-                <div class="selectable-card" onclick="selectRule('rule_cvc')">CVC Doubling Rule (List 40)</div>
-                <div class="selectable-card" onclick="selectRule('rule_dge')">Trigraph 'dge' Pattern (List 37)</div>
-                <div class="selectable-card" onclick="selectRule('rule_prefixes')">Prefix Assembly & Suffixes (List 41 & 43)</div>
-                <div class="selectable-card" onclick="selectRule('rule_cle')">Consonant '-le' Syllables (List 45)</div>
+                <div class="selectable-card" onclick="selectRule(event, 'rule_silente')">Silent 'e' Suffix Rule (List 44)</div>
+                <div class="selectable-card" onclick="selectRule(event, 'rule_cvc')">CVC Doubling Rule (List 40)</div>
+                <div class="selectable-card" onclick="selectRule(event, 'rule_dge')">Trigraph 'dge' Pattern (List 37)</div>
+                <div class="selectable-card" onclick="selectRule(event, 'rule_prefixes')">Prefix Assembly & Suffixes (List 41 & 43)</div>
+                <div class="selectable-card" onclick="selectRule(event, 'rule_cle')">Consonant '-le' Syllables (List 45)</div>
             </div>
         </div>
 
         <div class="setup-section">
             <h3>2. Choose Words Per Session:</h3>
             <div class="quantity-row">
-                <button class="qty-btn active" onclick="selectQty(10)">10 Words</button>
-                <button class="qty-btn" onclick="selectQty(15)">15 Words</button>
-                <button class="qty-btn" onclick="selectQty(20)">20 Words</button>
+                <button class="qty-btn active" onclick="selectQty(event, 10)">10 Words</button>
+                <button class="qty-btn" onclick="selectQty(event, 15)">15 Words</button>
+                <button class="qty-btn" onclick="selectQty(event, 20)">20 Words</button>
             </div>
         </div>
 
@@ -319,7 +319,7 @@
             { type: "spell", context: "Sentence: 'The magician waved his wand, and the rabbit instantly ________.'", prompt: "Combine: prefix [dis] (opposite) + base [appear] + suffix [-ed]", answer: "disappeared", rationale: "Combine prefix 'dis-' with base 'appear' and append suffix '-ed'. Watch out for the double 'p'!" },
             { type: "spell", context: "Sentence: 'If you miss the live broadcast, you can watch the ________.'", prompt: "Combine: prefix [re] + base [play]", answer: "replay", rationale: "Simply place the prefix 're-' right in front of the base word 'play'." },
             { type: "spell", context: "Sentence: 'It is normal for friends to occasionally ________ on some topics.'", prompt: "Combine: prefix [dis] + base [agree]", answer: "disagree", rationale: "The prefix 'dis-' has a single 's'. Adding it directly to 'agree' gives 'disagree'." },
-            { type: "spell", context: "Sentence: 'Taking credit for work you did not do is highly ________.'", prompt: "Combine: prefix [dis] + base [honest]", answer: "dishonest", rationale: "Place the prefix 'dis-' cleanly before the base word 'honest' without changing any internal letters." },
+            { type: "spell", context: "Sentence: 'Taking credit for work you did not do is highly ________.'", prompt: "Combine: prefix [dis] + base [honest]", answer: "honest", rationale: "Place the prefix 'dis-' cleanly before the base word 'honest' without changing any internal letters." },
             { type: "spell", context: "Sentence: 'Before making a final choice, it is smart to ________ your options.'", prompt: "Combine: prefix [re] + base [think]", answer: "rethink", rationale: "Prefix 're-' is attached directly ahead of the base word 'think'." },
             { type: "spell", context: "Sentence: 'We must completely ________ our bags before shifting to the next hotel.'", prompt: "Combine: prefix [re] + base [pack]", answer: "repack", rationale: "Prefix 're-' combines directly with the base word 'pack'." },
             { type: "spell", context: "Sentence: 'A broken promise can cause people to look at you with total ________.'", prompt: "Combine: prefix [dis] + base [trust]", answer: "distrust", rationale: "Prefix 'dis-' maps directly onto the front of the base word 'trust'." },
@@ -357,15 +357,15 @@
     let mistakeLog = []; 
     let studentName = "";
 
-    function selectRule(ruleKey) {
+    function selectRule(e, ruleKey) {
         document.querySelectorAll('.selectable-card').forEach(c => c.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        e.currentTarget.classList.add('active');
         targetRuleKey = ruleKey;
     }
 
-    function selectQty(amt) {
+    function selectQty(e, amt) {
         document.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        e.currentTarget.classList.add('active');
         sessionMaxQty = amt;
     }
 
@@ -475,7 +475,6 @@
         document.getElementById('submit-next-btn').innerText = "Advance Next Question";
     }
 
-    // NEW LOGIC TO FORCE DISPATCH PRESERVING WORK COMPLETED
     function forceEarlySubmission() {
         if (activeIndex === 0 && runtimeState === "question") {
             if (!confirm("You haven't completed any questions yet. Are you sure you want to end the session?")) {
@@ -487,7 +486,6 @@
             }
         }
         
-        // If they click stop while looking at an unanswered question, add a quick note about it being skipped/unattempted.
         if (runtimeState === "question" && activeIndex < quizPool.length) {
             let currentItem = quizPool[activeIndex];
             mistakeLog.push(`Item ${activeIndex+1} (${currentItem.answer}): UNATTEMPTED [Session ended early]`);
@@ -500,13 +498,11 @@
         document.getElementById('play-view').classList.add('hidden');
         document.getElementById('score-view').classList.remove('hidden');
 
-        // Dynamically scales maximum based on how many they actually interacted with
         let totalAttempted = activeIndex;
         if (runtimeState === "feedback") {
-            totalAttempted += 1; // Count the current one if they submitted an answer but didn't hit advance
+            totalAttempted += 1; 
         }
         
-        // Cap total attempted at the maximum bounds of the pool
         if (totalAttempted > quizPool.length) totalAttempted = quizPool.length;
 
         const sessionScoreString = `${scoreCounter}/${totalAttempted}`;
