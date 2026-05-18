@@ -216,25 +216,25 @@
 
         <div class="setup-section">
             <h3>1. Select Your Target Rule Unit:</h3>
-            <div class="grid-options">
-                <div class="selectable-card" onclick="selectRule(event, 'rule_silente')">Silent 'e' Suffix Rule (List 44)</div>
-                <div class="selectable-card" onclick="selectRule(event, 'rule_cvc')">CVC Doubling Rule (List 40)</div>
-                <div class="selectable-card" onclick="selectRule(event, 'rule_dge')">Trigraph 'dge' Pattern (List 37)</div>
-                <div class="selectable-card" onclick="selectRule(event, 'rule_prefixes')">Prefix Assembly & Suffixes (List 41 & 43)</div>
-                <div class="selectable-card" onclick="selectRule(event, 'rule_cle')">Consonant '-le' Syllables (List 45)</div>
+            <div class="grid-options" id="rule-grid">
+                <div class="selectable-card" data-rule="rule_silente">Silent 'e' Suffix Rule (List 44)</div>
+                <div class="selectable-card" data-rule="rule_cvc">CVC Doubling Rule (List 40)</div>
+                <div class="selectable-card" data-rule="rule_dge">Trigraph 'dge' Pattern (List 37)</div>
+                <div class="selectable-card" data-rule="rule_prefixes">Prefix Assembly & Suffixes (List 41 & 43)</div>
+                <div class="selectable-card" data-rule="rule_cle">Consonant '-le' Syllables (List 45)</div>
             </div>
         </div>
 
         <div class="setup-section">
             <h3>2. Choose Words Per Session:</h3>
-            <div class="quantity-row">
-                <button class="qty-btn active" onclick="selectQty(event, 10)">10 Words</button>
-                <button class="qty-btn" onclick="selectQty(event, 15)">15 Words</button>
-                <button class="qty-btn" onclick="selectQty(event, 20)">20 Words</button>
+            <div class="quantity-row" id="qty-row">
+                <button class="qty-btn active" data-qty="10">10 Words</button>
+                <button class="qty-btn" data-qty="15">15 Words</button>
+                <button class="qty-btn" data-qty="20">20 Words</button>
             </div>
         </div>
 
-        <button class="action-btn" onclick="startFocusedQuiz()">Begin Rule Practice</button>
+        <button class="action-btn" id="start-quiz-btn">Begin Rule Practice</button>
     </div>
 
     <div id="play-view" class="hidden">
@@ -242,11 +242,11 @@
         <div id="activity-node"></div>
         <div id="feedback-node" class="hidden"></div>
         <div style="margin-top: 20px;">
-            <button id="submit-next-btn" class="action-btn" onclick="processWorkspaceButton()">Submit Answer</button>
+            <button id="submit-next-btn" class="action-btn">Submit Answer</button>
         </div>
 
         <div class="early-stop-container">
-            <button class="stop-btn" onclick="forceEarlySubmission()">
+            <button class="stop-btn" id="early-stop-btn">
                 ⏱️ Run out of time? End Session & Submit Data
             </button>
         </div>
@@ -263,7 +263,7 @@
             👉 Send Diagnostic Summary to Google Form
         </button>
         
-        <button class="action-btn" onclick="location.reload()" style="background: var(--text-light); margin-top: 14px;">Choose Another Rule</button>
+        <button class="action-btn" id="reload-page-btn" style="background: var(--text-light); margin-top: 14px;">Choose Another Rule</button>
     </div>
 </div>
 
@@ -357,17 +357,39 @@
     let mistakeLog = []; 
     let studentName = "";
 
-    function selectRule(e, ruleKey) {
-        document.querySelectorAll('.selectable-card').forEach(c => c.classList.remove('active'));
-        e.currentTarget.classList.add('active');
-        targetRuleKey = ruleKey;
-    }
+    // GITHUB SAFE EVENT LISTENERS SETUP
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // Target Unit Cards Listener
+        const ruleGrid = document.getElementById("rule-grid");
+        ruleGrid.addEventListener("click", function(event) {
+            const card = event.target.closest(".selectable-card");
+            if (!card) return;
+            
+            document.querySelectorAll('.selectable-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            targetRuleKey = card.getAttribute("data-rule");
+        });
 
-    function selectQty(e, amt) {
-        document.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('active'));
-        e.currentTarget.classList.add('active');
-        sessionMaxQty = amt;
-    }
+        // Quantity Mode Buttons Listener
+        const qtyRow = document.getElementById("qty-row");
+        qtyRow.addEventListener("click", function(event) {
+            const btn = event.target.closest(".qty-btn");
+            if (!btn) return;
+            
+            document.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            sessionMaxQty = parseInt(btn.getAttribute("data-qty"), 10);
+        });
+
+        // Setup Operations Buttons
+        document.getElementById("start-quiz-btn").addEventListener("click", startFocusedQuiz);
+        document.getElementById("submit-next-btn").addEventListener("click", processWorkspaceButton);
+        document.getElementById("early-stop-btn").addEventListener("click", forceEarlySubmission);
+        document.getElementById("reload-page-btn").addEventListener("click", function() {
+            location.reload();
+        });
+    });
 
     function startFocusedQuiz() {
         studentName = document.getElementById('student-name').value.trim();
@@ -404,23 +426,33 @@
         nodeHtml += `<p style="color: var(--text-light); font-size: 0.95rem; font-weight: bold; margin-bottom: 16px;">${currentItem.prompt}</p>`;
 
         if(currentItem.type === "mcq") {
-            nodeHtml += `<div class="options-list">`;
+            nodeHtml += `<div class="options-list" id="mcq-options-container">`;
             currentItem.choices.forEach(opt => {
-                nodeHtml += `<div class="option-item" onclick="selectMcqItem(this, '${opt}')">${opt}</div>`;
+                nodeHtml += `<div class="option-item" data-value="${opt}">${opt}</div>`;
             });
             nodeHtml += `</div>`;
         } else {
-            nodeHtml += `<input type="text" id="text-response" autocomplete="off" placeholder="Type whole word here..." onkeyup="if(event.key==='Enter') processWorkspaceButton()">`;
+            nodeHtml += `<input type="text" id="text-response" autocomplete="off" placeholder="Type whole word here...">`;
         }
 
         document.getElementById('activity-node').innerHTML = nodeHtml;
-        if(document.getElementById('text-response')) document.getElementById('text-response').focus();
-    }
-
-    function selectMcqItem(element, val) {
-        document.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
-        element.classList.add('selected');
-        selectedMcqVal = val;
+        
+        // Attach localized runtime actions to dynamically compiled templates safely
+        if(currentItem.type === "mcq") {
+            document.getElementById("mcq-options-container").addEventListener("click", function(e) {
+                const item = e.target.closest(".option-item");
+                if(!item) return;
+                document.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedMcqVal = item.getAttribute("data-value");
+            });
+        } else {
+            const textResponseField = document.getElementById('text-response');
+            textResponseField.focus();
+            textResponseField.addEventListener("keyup", function(e) {
+                if(e.key === 'Enter') processWorkspaceButton();
+            });
+        }
     }
 
     function processWorkspaceButton() {
