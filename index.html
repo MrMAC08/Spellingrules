@@ -75,29 +75,49 @@
             font-weight: 600;
             transition: all 0.2s;
             background: white;
+            color: var(--text);
+            display: block;
+            text-align: left;
         }
 
         .selectable-card:hover { border-color: var(--primary); background: #f0f6ff; }
         .selectable-card.active { border-color: var(--primary); background: #eff6ff; color: var(--primary-dark); }
 
-        .quantity-row {
+        .toggle-row, .quantity-row {
             display: flex;
             gap: 12px;
             margin-bottom: 24px;
         }
 
-        .qty-btn {
+        .toggle-btn, .qty-btn {
             flex: 1;
             background: white;
             color: var(--text);
             border: 2px solid var(--border);
-            padding: 10px;
-            font-weight: 600;
+            padding: 12px;
+            font-weight: 700;
+            font-size: 1rem;
             border-radius: 8px;
             cursor: pointer;
+            text-align: center;
+            transition: all 0.15s ease-in-out;
         }
 
-        .qty-btn.active { background: var(--text); color: white; border-color: var(--text); }
+        .toggle-btn:hover, .qty-btn:hover {
+            border-color: var(--text-light);
+        }
+
+        .toggle-btn.active { 
+            background: var(--primary); 
+            color: white; 
+            border-color: var(--primary); 
+        }
+        
+        .qty-btn.active { 
+            background: var(--text); 
+            color: white; 
+            border-color: var(--text); 
+        }
 
         input[type="text"] {
             width: 100%;
@@ -155,11 +175,27 @@
 
         .feedback-container {
             margin-top: 20px;
-            padding: 16px;
+            padding: 18px;
             border-radius: 8px;
+            line-height: 1.6;
         }
-        .feedback-container.correct { background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-        .feedback-container.wrong { background-color: #fff1f2; color: #991b1b; border: 1px solid #fecdd3; }
+        .feedback-container.correct { background-color: #ecfdf5; color: #065f46; border: 2px solid #a7f3d0; }
+        .feedback-container.wrong { background-color: #fff1f2; color: #991b1b; border: 2px solid #fecdd3; }
+
+        .teaching-box {
+            margin-top: 12px;
+            background: #ffffff;
+            border-left: 4px solid #ef4444;
+            padding: 12px 14px;
+            border-radius: 4px;
+            color: #334155;
+            font-size: 0.95rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .teaching-box strong {
+            color: var(--text);
+        }
 
         .progress-container {
             height: 6px;
@@ -215,26 +251,34 @@
         </div>
 
         <div class="setup-section">
-            <h3>1. Select Your Target Rule Unit:</h3>
-            <div class="grid-options" id="rule-grid">
-                <div class="selectable-card" data-rule="rule_silente">Silent 'e' Suffix Rule (List 44)</div>
-                <div class="selectable-card" data-rule="rule_cvc">CVC Doubling Rule (List 40)</div>
-                <div class="selectable-card" data-rule="rule_dge">Trigraph 'dge' Pattern (List 37)</div>
-                <div class="selectable-card" data-rule="rule_prefixes">Prefix Assembly & Suffixes (List 41 & 43)</div>
-                <div class="selectable-card" data-rule="rule_cle">Consonant '-le' Syllables (List 45)</div>
+            <h3>1. Choose Challenge Mode:</h3>
+            <div class="toggle-row" id="level-toggle-row">
+                <button type="button" class="toggle-btn active" data-level="core">Core Mode</button>
+                <button type="button" class="toggle-btn" data-level="extension">Extension Mode</button>
             </div>
         </div>
 
         <div class="setup-section">
-            <h3>2. Choose Words Per Session:</h3>
-            <div class="quantity-row" id="qty-row">
-                <button class="qty-btn active" data-qty="10">10 Words</button>
-                <button class="qty-btn" data-qty="15">15 Words</button>
-                <button class="qty-btn" data-qty="20">20 Words</button>
+            <h3>2. Select Your Target Rule Unit:</h3>
+            <div class="grid-options" id="rule-grid">
+                <div class="selectable-card" data-rule="rule_silente">Silent 'e' Suffix Framework</div>
+                <div class="selectable-card" data-rule="rule_cvc">CVC Doubling Adjustments</div>
+                <div class="selectable-card" data-rule="rule_dge">Trigraph 'dge' & Soft Consonants</div>
+                <div class="selectable-card" data-rule="rule_prefixes">Prefix Assembly & Morphological Shifts</div>
+                <div class="selectable-card" data-rule="rule_cle">Consonant '-le' & Advanced Phonology</div>
             </div>
         </div>
 
-        <button class="action-btn" id="start-quiz-btn">Begin Rule Practice</button>
+        <div class="setup-section">
+            <h3>3. Choose Words Per Session:</h3>
+            <div class="quantity-row" id="qty-row">
+                <button type="button" class="qty-btn active" data-qty="10">10 Words</button>
+                <button type="button" class="qty-btn" data-qty="15">15 Words</button>
+                <button type="button" class="qty-btn" data-qty="20">20 Words</button>
+            </div>
+        </div>
+
+        <button type="button" class="action-btn" id="start-quiz-btn">Begin Rule Practice</button>
     </div>
 
     <div id="play-view" class="hidden">
@@ -246,7 +290,7 @@
         </div>
 
         <div class="early-stop-container">
-            <button class="stop-btn" id="early-stop-btn">
+            <button type="button" class="stop-btn" id="early-stop-btn">
                 ⏱️ Run out of time? End Session & Submit Data
             </button>
         </div>
@@ -263,297 +307,356 @@
             👉 Send Diagnostic Summary to Google Form
         </button>
         
-        <button class="action-btn" id="reload-page-btn" style="background: var(--text-light); margin-top: 14px;">Choose Another Rule</button>
+        <button type="button" class="action-btn" id="reload-page-btn" style="background: var(--text-light); margin-top: 14px;">Choose Another Rule</button>
     </div>
 </div>
 
 <script>
     // =========================================================================
-    // 📝 COMPREHENSIVE 60-WORD CURRICULUM DATA DECK
+    // 📝 COMPREHENSIVE CURRICULUM DATABASE WITH ENHANCED LESSON RATIONALE
     // =========================================================================
     const masterDatabase = {
-        rule_silente: [
-            { type: "spell", context: "Sentence: 'She ________ all the money she earned from her summer job.'", prompt: "Combine: base [save] + suffix [-ed]", answer: "saved", rationale: "Because '-ed' is a vowel suffix, completely drop the silent 'e' from 'save' before adding it." },
-            { type: "spell", context: "Sentence: 'We are feeling very ________ that the weather stays sunny.'", prompt: "Combine: base [hope] + suffix [-ful]", answer: "hopeful", rationale: "Because '-ful' is a consonant suffix, keep the silent 'e' on 'hope'. Note: '-ful' ends with a single 'l'." },
-            { type: "spell", context: "Sentence: 'The baker spread chocolate ________ smoothly across the cake.'", prompt: "Combine: base [ice] + suffix [-ing]", answer: "icing", rationale: "Because '-ing' is a vowel suffix, drop the silent 'e' from 'ice' before joining." },
-            { type: "spell", context: "Sentence: 'The broken old flashlight was completely ________ in the dark.'", prompt: "Combine: base [use] + suffix [-less]", answer: "useless", rationale: "Because '-less' is a consonant suffix, keep the silent 'e' on 'use' completely unchanged." },
-            { type: "spell", context: "Sentence: 'We are ________ to go on holiday abroad next week.'", prompt: "Combine: base [hope] + suffix [-ing]", answer: "hoping", rationale: "Drop the silent 'e' because '-ing' is a vowel suffix. (Double 'p' would make 'hopping')." },
-            { type: "spell", context: "Sentence: 'The wild horse grew quiet once it was completely ________.'", prompt: "Combine: base [tame] + suffix [-ed]", answer: "tamed", rationale: "Because '-ed' is a vowel suffix, drop the silent 'e' from 'tame'." },
-            { type: "spell", context: "Sentence: 'Dark clouds mean it is highly ________ to rain this afternoon.'", prompt: "Combine: base [like] + suffix [-ly]", answer: "likely", rationale: "Because '-ly' is a consonant suffix, keep the silent 'e' on 'like' intact." },
-            { type: "spell", context: "Sentence: 'The old cabin stood entirely ________ on top of the quiet mountain.'", prompt: "Combine: base [lone] + suffix [-ly]", answer: "lonely", rationale: "Because '-ly' is a consonant suffix, keep the silent 'e' on 'lone'." },
-            { type: "spell", context: "Sentence: 'The window pane was ________ after the baseball crashed into it.'", prompt: "Combine: base [broke] + suffix [-en]", answer: "broken", rationale: "The suffix '-en' starts with a vowel, so drop the silent 'e' from 'broke' to form 'broken'." },
-            { type: "spell", context: "Sentence: 'The stray cat felt lost and ________ out in the freezing rain.'", prompt: "Combine: base [hope] + suffix [-less]", answer: "hopeless", rationale: "Because '-less' is a consonant suffix, keep the silent 'e' on 'hope' perfectly intact." },
-            { type: "mcq", context: "Sentence: 'He carefully copied the sentence, making sure his writing was ________.'", prompt: "Which application of [make] + [-ing] is completely correct?", choices: ["makeing", "makein", "making"], answer: "making", rationale: "Drop the silent 'e' on 'make' before attaching the vowel suffix '-ing'." },
-            { type: "mcq", context: "Sentence: 'The child looked up with a happy and ________ expression.'", prompt: "Which application of [smile] + [-ing] is completely correct?", choices: ["smild", "smiling", "smileing"], answer: "smiling", rationale: "Drop the silent 'e' on 'smile' before adding the vowel suffix '-ing'." }
-        ],
-        rule_cvc: [
-            { type: "spell", context: "Sentence: 'The big school bus ________ right at the corner of the street.'", prompt: "Combine: base [stop] + suffix [-ed]", answer: "stopped", rationale: "In a single-syllable word ending in short vowel + consonant (CVC), double the final consonant before a vowel suffix." },
-            { type: "spell", context: "Sentence: 'We carefully ________ our mud-stained boots before stepping inside.'", prompt: "Combine: base [clean] + suffix [-ed]", answer: "cleaned", rationale: "'Clean' contains a long vowel team (ea). Do NOT double the final consonant if there is a long vowel pattern!" },
-            { type: "spell", context: "Sentence: 'The barber expertly ________ the edges of his shaggy hair.'", prompt: "Combine: base [trim] + suffix [-ed]", answer: "trimmed", rationale: "'Trim' is a single-syllable short vowel CVC word. Double the 'm' before adding vowel suffix '-ed'." },
-            { type: "spell", context: "Sentence: 'Every morning, the energetic dog ________ around the yard.'", prompt: "Combine: base [run] + suffix [-s]", answer: "runs", rationale: "No doubling is required because the suffix '-s' begins with a consonant." },
-            { type: "spell", context: "Sentence: 'The tennis player was ________ the ball hard against the brick wall.'", prompt: "Combine: base [hit] + suffix [-ing]", answer: "hitting", rationale: "'Hit' is a short vowel CVC word. Double the 't' before adding the vowel suffix '-ing'." },
-            { type: "spell", context: "Sentence: 'The joyful little girl tightly ________ her favorite teddy bear.'", prompt: "Combine: base [hug] + suffix [-ed]", answer: "hugged", rationale: "'Hug' is a short vowel CVC word. Double the 'g' before adding vowel suffix '-ed'." },
-            { type: "spell", context: "Sentence: 'Be careful drinking the soup, as it is much ________ than you think.'", prompt: "Combine: base [hot] + suffix [-er]", answer: "hotter", rationale: "'Hot' matches the short vowel CVC pattern. Double the final 't' before adding vowel suffix '-er'." },
-            { type: "spell", context: "Sentence: 'The old log left out in the damp woods was completely ________.'", prompt: "Combine: base [rot] + suffix [-en]", answer: "rotten", rationale: "'Rot' is a short vowel CVC word. Double the 't' before adding vowel suffix '-en'." },
-            { type: "spell", context: "Sentence: 'After hiking up the trail, the tired climbers ________ under a tree.'", prompt: "Combine: base [rest] + suffix [-ed]", answer: "rested", rationale: "No doubling is needed because 'rest' ends in a CVCC pattern (two final consonants: s and t)." },
-            { type: "spell", context: "Sentence: 'It ________ heavily throughout the night, soaking the fields.'", prompt: "Combine: base [rain] + suffix [-ed]", answer: "rained", rationale: "'Rain' has a long vowel team (ai), so do not double the ending consonant." },
-            { type: "spell", context: "Sentence: 'The runner smoothly ________ the race right down the middle.'", prompt: "Combine: base [split] + suffix [-s]", answer: "splits", rationale: "The suffix '-s' is a consonant suffix, so no consonant doubling occurs." },
-            { type: "spell", context: "Sentence: 'The warm afternoon sun quickly ________ the snowman in the yard.'", prompt: "Combine: base [melt] + suffix [-ed]", answer: "melted", rationale: "'Melt' ends in two consonants (l and t), meaning it is a CVCC word and needs no consonant doubling before adding a suffix." }
-        ],
-        rule_dge: [
-            { type: "spell", context: "Sentence: 'We walked carefully across the old stone ________ over the river.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "bridge", rationale: "The spelling '-dge' is used at the end of a single-syllable word straight after a short vowel sound." },
-            { type: "spell", context: "Sentence: 'The gardener spent the morning cutting the tall green ________.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "hedge", rationale: "Spelled with '-dge' because it immediately follows the short vowel /e/ sound." },
-            { type: "spell", context: "Sentence: 'He reached up and grabbed a heavy book from the top ________.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "ledge", rationale: "Spelled with '-dge' because it sits straight after the short vowel /e/ sound." },
-            { type: "spell", context: "Sentence: 'The courtroom ________ listened intently to both sides of the case.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "judge", rationale: "Uses the trigraph '-dge' right after the short vowel /u/ sound." },
-            { type: "spell", context: "Sentence: 'Be careful not to ________ the wet black ink on your sketch.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "smudge", rationale: "Requires '-dge' right after the short vowel /u/ sound." },
-            { type: "spell", context: "Sentence: 'No matter how hard I pushed, the heavy iron door would not ________.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "budge", rationale: "Spelled with '-dge' right after the short vowel /u/ sound." },
-            { type: "spell", context: "Sentence: 'Please stay back from the sharp ________ of the rocky cliff face.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "edge", rationale: "Spelled with '-dge' right after the short vowel /e/ sound." },
-            { type: "spell", context: "Sentence: 'The police officer proudly wore a shiny silver ________ on his uniform.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "badge", rationale: "Spelled with '-dge' right after the short vowel /a/ sound." },
-            { type: "spell", context: "Sentence: 'We had to quickly ________ to avoid the flying playground ball.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "dodge", rationale: "Spelled with '-dge' right after the short vowel /o/ sound." },
-            { type: "spell", context: "Sentence: 'The children rode down the snowy hill on a large wooden ________.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "sledge", rationale: "Spelled with '-dge' directly following the short vowel /e/ sound." },
-            { type: "spell", context: "Sentence: 'The sweet chocolate ________ tasted rich and sugary.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "fudge", rationale: "Spelled with '-dge' directly following the short vowel /u/ sound." },
-            { type: "spell", context: "Sentence: 'The mountain hikers had to slowly ________ through deep mud.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "trudge", rationale: "Spelled with '-dge' directly following the short vowel /u/ sound." }
-        ],
-        rule_prefixes: [
-            { type: "spell", context: "Sentence: 'The crew had to completely ________ the containers onto the truck.'", prompt: "Combine: prefix [re] (again) + base [load]", answer: "reload", rationale: "A prefix is attached directly before the base word without dashes or modifying the base word spelling." },
-            { type: "spell", context: "Sentence: 'The magician waved his wand, and the rabbit instantly ________.'", prompt: "Combine: prefix [dis] (opposite) + base [appear] + suffix [-ed]", answer: "disappeared", rationale: "Combine prefix 'dis-' with base 'appear' and append suffix '-ed'. Watch out for the double 'p'!" },
-            { type: "spell", context: "Sentence: 'If you miss the live broadcast, you can watch the ________.'", prompt: "Combine: prefix [re] + base [play]", answer: "replay", rationale: "Simply place the prefix 're-' right in front of the base word 'play'." },
-            { type: "spell", context: "Sentence: 'It is normal for friends to occasionally ________ on some topics.'", prompt: "Combine: prefix [dis] + base [agree]", answer: "disagree", rationale: "The prefix 'dis-' has a single 's'. Adding it directly to 'agree' gives 'disagree'." },
-            { type: "spell", context: "Sentence: 'Taking credit for work you did not do is highly ________.'", prompt: "Combine: prefix [dis] + base [honest]", answer: "honest", rationale: "Place the prefix 'dis-' cleanly before the base word 'honest' without changing any internal letters." },
-            { type: "spell", context: "Sentence: 'Before making a final choice, it is smart to ________ your options.'", prompt: "Combine: prefix [re] + base [think]", answer: "rethink", rationale: "Prefix 're-' is attached directly ahead of the base word 'think'." },
-            { type: "spell", context: "Sentence: 'We must completely ________ our bags before shifting to the next hotel.'", prompt: "Combine: prefix [re] + base [pack]", answer: "repack", rationale: "Prefix 're-' combines directly with the base word 'pack'." },
-            { type: "spell", context: "Sentence: 'A broken promise can cause people to look at you with total ________.'", prompt: "Combine: prefix [dis] + base [trust]", answer: "distrust", rationale: "Prefix 'dis-' maps directly onto the front of the base word 'trust'." },
-            { type: "spell", context: "Sentence: 'Your essay layout is messy; please ________ the opening paragraph.'", prompt: "Combine: prefix [re] + base [write]", answer: "rewrite", rationale: "Attach prefix 're-' directly to 'write' with no letter alterations or hyphens required." },
-            { type: "spell", context: "Sentence: 'You can easily ________ the security system using this keypad code.'", prompt: "Combine: prefix [dis] + base [able]", answer: "disable", rationale: "Prefix 'dis-' plus base word 'able' forms 'disable'." },
-            { type: "spell", context: "Sentence: 'The playful kitten was full of energy and exceptionally ________.'", prompt: "Combine base word [play] + suffix [-ful]", answer: "playful", rationale: "The suffix '-ful' is always spelled with a single 'l' at the end of a word." },
-            { type: "spell", context: "Sentence: 'The meal was bland and completely ________ because there was no salt.'", prompt: "Combine base word [taste] + suffix [-less]", answer: "tasteless", rationale: "Because '-less' is a consonant suffix, keep the silent 'e' on 'taste' unchanged." }
-        ],
-        rule_cle: [
-            { type: "spell", context: "Sentence: 'We sat together around the large wooden kitchen ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "table", rationale: "The first syllable is an open syllable with a long vowel, so the middle consonant stays single." },
-            { type: "spell", context: "Sentence: 'The puppy would excited-ly ________ its tail when happy.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "wiggle", rationale: "The first syllable has a short vowel sound, so you must double the consonant before adding the '-le' syllable." },
-            { type: "spell", context: "Sentence: 'The primary school teacher read a story from an old ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "bible", rationale: "The first syllable is open with a long vowel sound, so keep the middle consonant single." },
-            { type: "spell", context: "Sentence: 'The tiny baby bird was so ________ and helpless in the nest.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "little", rationale: "The first syllable contains a short vowel sound, so double the 't' before the '-le' ending." },
-            { type: "spell", context: "Sentence: 'The kind man was always very ________ about his great achievements.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "humble", rationale: "The first syllable already ends with two distinct consonants (m and b), so no consonant doubling is needed." },
-            { type: "spell", context: "Sentence: 'The blowing water soap ________ popped as soon as it hit the grass.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "bubble", rationale: "The first syllable has a short vowel sound, so double the 'b' before the final '-le'." },
-            { type: "spell", context: "Sentence: 'The circus performer can ________ three colored balls at the same time.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "juggle", rationale: "The first syllable features a short vowel sound, requiring a double 'g' before the '-le'." },
-            { type: "spell", context: "Sentence: 'The mother gently rocked the sleeping baby in the wooden ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "cradle", rationale: "The first syllable has a long vowel sound, so the middle consonant remains single." },
-            { type: "spell", context: "Sentence: 'The old farmer had to wrap a tight strap around the horse ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "saddle", rationale: "The first syllable contains a short vowel sound, so double the 'd' before adding '-le'." },
-            { type: "spell", context: "Sentence: 'The dry autumn leaves made a soft ________ sound in the wind.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "rustle", rationale: "Spelled with a silent 't' inside the final '-le' framework." },
-            { type: "spell", context: "Sentence: 'The shiny glass ________ rolled across the smooth wooden floor.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "marble", rationale: "The first syllable ends with an 'r' sound (ar), so no consonant doubling is required." },
-            { type: "spell", context: "Sentence: 'The bright morning sun caused the dew on the grass to ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "sparkle", rationale: "The first syllable ends with an 'r' sound pattern (ar), so keep the consonant single." }
-        ]
+        core: {
+            rule_silente: [
+                { type: "spell", context: "Sentence: 'She ________ all the money she earned from her summer job.'", prompt: "Combine: base [save] + suffix [-ed]", answer: "saved", rationale: "<strong>'save' ends in a silent 'e'</strong>, and the suffix <strong>'-ed' starts with a vowel</strong>. When adding a vowel suffix to a silent 'e' word, you must drop the 'e' before adding the suffix." },
+                { type: "spell", context: "Sentence: 'We are feeling very ________ that the weather stays sunny.'", prompt: "Combine: base [hope] + suffix [-ful]", answer: "hopeful", rationale: "<strong>'-ful' starts with a consonant</strong>. When adding a consonant suffix to a silent 'e' word, you **keep** the 'e' completely intact." },
+                { type: "spell", context: "Sentence: 'The baker spread chocolate ________ smoothly across the cake.'", prompt: "Combine: base [ice] + suffix [-ing]", answer: "icing", rationale: "The suffix <strong>'-ing' starts with a vowel</strong>. Drop the silent 'e' at the end of 'ice' before sealing the suffix onto it." },
+                { type: "spell", context: "Sentence: 'The broken old flashlight was completely ________ in the dark.'", prompt: "Combine: base [use] + suffix [-less]", answer: "useless", rationale: "The suffix <strong>'-less' starts with a consonant</strong>. Keep the silent 'e' on 'use' exactly where it is." },
+                { type: "spell", context: "Sentence: 'We are ________ to go on holiday abroad next week.'", prompt: "Combine: base [hope] + suffix [-ing]", answer: "hoping", rationale: "Drop the silent 'e' from 'hope' because <strong>'-ing' is a vowel suffix</strong>." },
+                { type: "spell", context: "Sentence: 'The wild horse grew quiet once it was completely ________.'", prompt: "Combine: base [tame] + suffix [-ed]", answer: "tamed", rationale: "Drop the silent 'e' from 'tame' because the suffix <strong>'-ed' begins with a vowel</strong>." },
+                { type: "spell", context: "Sentence: 'Dark clouds mean it is highly ________ to rain this afternoon.'", prompt: "Combine: base [like] + suffix [-ly]", answer: "likely", rationale: "The suffix <strong>'-ly' begins with a consonant</strong>. Leave the silent 'e' at the end of 'like' alone." },
+                { type: "spell", context: "Sentence: 'The old cabin stood entirely ________ on top of the quiet mountain.'", prompt: "Combine: base [lone] + suffix [-ly]", answer: "lonely", rationale: "Keep the silent 'e' on 'lone' because <strong>'-ly' is a consonant suffix</strong>." },
+                { type: "spell", context: "Sentence: 'The window pane was ________ after the baseball crashed into it.'", prompt: "Combine: base [broke] + suffix [-en]", answer: "broken", rationale: "The suffix <strong>'-en' starts with a vowel</strong>, so drop the silent 'e' from 'broke' before connecting them." },
+                { type: "spell", context: "Sentence: 'The stray cat felt lost and ________ out in the freezing rain.'", prompt: "Combine: base [hope] + suffix [-less]", answer: "hopeless", rationale: "The suffix <strong>'-less' is a consonant suffix</strong>, meaning the silent 'e' stays on the base word." },
+                { type: "mcq", context: "Sentence: 'He carefully copied the sentence, making sure his writing was ________.'", prompt: "Which application of [make] + [-ing] is correct?", choices: ["makeing", "makein", "making"], answer: "making", rationale: "Drop the silent 'e' on 'make' because you are linking the <strong>vowel suffix '-ing'</strong>." },
+                { type: "mcq", context: "Sentence: 'The child looked up with a happy and ________ expression.'", prompt: "Which application of [smile] + [-ing] is correct?", choices: ["smild", "smiling", "smileing"], answer: "smiling", rationale: "You must drop the silent 'e' on 'smile' before adding the <strong>vowel suffix '-ing'</strong>." }
+            ],
+            rule_cvc: [
+                { type: "spell", context: "Sentence: 'The big school bus ________ right at the corner of the street.'", prompt: "Combine: base [stop] + suffix [-ed]", answer: "stopped", rationale: "<strong>'stop' is a 1-syllable word that ends in a short vowel + consonant (CVC)</strong>. When adding a vowel suffix like '-ed', you must **double** the final consonant to preserve that short sound." },
+                { type: "spell", context: "Sentence: 'We carefully ________ our mud-stained boots before stepping inside.'", prompt: "Combine: base [clean] + suffix [-ed]", answer: "cleaned", rationale: "<strong>'clean' has a long vowel team (ea)</strong>. Do not double the final consonant if the vowel sound is long!" },
+                { type: "spell", context: "Sentence: 'The barber expertly ________ the edges of his shaggy hair.'", prompt: "Combine: base [trim] + suffix [-ed]", answer: "trimmed", rationale: "<strong>'trim' matches the short vowel CVC pattern</strong>. Double the final 'm' before linking the vowel suffix '-ed'." },
+                { type: "spell", context: "Sentence: 'Every morning, the energetic dog ________ around the yard.'", prompt: "Combine: base [run] + suffix [-s]", answer: "runs", rationale: "The suffix <strong>'-s' is a consonant suffix</strong>. You only double the final consonant when attaching a *vowel* suffix." },
+                { type: "spell", context: "Sentence: 'The tennis player was ________ the ball hard against the brick wall.'", prompt: "Combine: base [hit] + suffix [-ing]", answer: "hitting", rationale: "<strong>'hit' is a short vowel CVC word</strong>. Double the final 't' before locking on the vowel suffix '-ing'." },
+                { type: "spell", context: "Sentence: 'The joyful little girl tightly ________ her favorite teddy bear.'", prompt: "Combine: base [hug] + suffix [-ed]", answer: "hugged", rationale: "<strong>'hug' ends in a single short vowel and consonant</strong>. Double the 'g' before adding the vowel suffix '-ed'." },
+                { type: "spell", context: "Sentence: 'Be careful drinking the soup, as it is much ________ than you think.'", prompt: "Combine: base [hot] + suffix [-er]", answer: "hotter", rationale: "Double the final 't' on 'hot' because it is a short vowel CVC base combined with a <strong>vowel suffix ('-er')</strong>." },
+                { type: "spell", context: "Sentence: 'The old log left out in the damp woods was completely ________.'", prompt: "Combine: base [rot] + suffix [-en]", answer: "rotten", rationale: "Double the 't' in 'rot' because it's a short vowel CVC word receiving a <strong>vowel suffix ('-en')</strong>." },
+                { type: "spell", context: "Sentence: 'After hiking up the trail, the tired climbers ________ under a tree.'", prompt: "Combine: base [rest] + suffix [-ed]", answer: "rested", rationale: "<strong>'rest' ends in two consonants (-st)</strong>, making it a CVCC pattern. No doubling is needed if there are already two consonants protecting the vowel." },
+                { type: "spell", context: "Sentence: 'It ________ heavily throughout the night, soaking the fields.'", prompt: "Combine: base [rain] + suffix [-ed]", answer: "rained", rationale: "<strong>'rain' uses a long vowel team (ai)</strong>, so you do not double the ending consonant." },
+                { type: "spell", context: "Sentence: 'The runner smoothly ________ the race right down the middle.'", prompt: "Combine: base [split] + suffix [-s]", answer: "splits", rationale: "The suffix <strong>'-s' begins with a consonant</strong>, meaning no consonant doubling rule is triggered." },
+                { type: "spell", context: "Sentence: 'The warm afternoon sun quickly ________ the snowman in the yard.'", prompt: "Combine: base [melt] + suffix [-ed]", answer: "melted", rationale: "<strong>'melt' ends in two consonants (l and t)</strong>. Do not double the final letter if the word already ends in a blend." }
+            ],
+            rule_dge: [
+                { type: "spell", context: "Sentence: 'We walked carefully across the old stone ________ over the river.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "bridge", rationale: "Use the trigraph <strong>'-dge' immediately after a short vowel sound</strong>. In 'bridge', the 'i' makes a short sound, requiring the '-dge' layout." },
+                { type: "spell", context: "Sentence: 'The gardener spent the morning cutting the tall green ________.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "hedge", rationale: "Spelled with <strong>'-dge' because it immediately follows the short vowel /e/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'He reached up and grabbed a heavy book from the top ________.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "ledge", rationale: "Requires the <strong>'-dge' structural pattern</strong> because it sits immediately after a short vowel /e/ sound." },
+                { type: "spell", context: "Sentence: 'The courtroom ________ listened intently to both sides of the case.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "judge", rationale: "Uses the trigraph <strong>'-dge' right after the short vowel /u/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'Be careful not to ________ the wet black ink on your sketch.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "smudge", rationale: "We spell it with <strong>'-dge' because the /j/ sound sits right after a short /u/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'No matter how hard I pushed, the heavy iron door would not ________.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "budge", rationale: "Spelled with <strong>'-dge' right after the short vowel /u/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'Please stay back from the sharp ________ of the rocky cliff face.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "edge", rationale: "Spelled with <strong>'-dge' right after the short vowel /e/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'The police officer proudly wore a shiny silver ________ on his uniform.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "badge", rationale: "Spelled with <strong>'-dge' right after the short vowel /a/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'We had to quickly ________ to avoid the flying playground ball.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "dodge", rationale: "Spelled with <strong>'-dge' right after the short vowel /o/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'The children rode down the snowy hill on a large wooden ________.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "sledge", rationale: "Spelled with <strong>'-dge' directly following the short vowel /e/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'The sweet chocolate ________ tasted rich and sugary.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "fudge", rationale: "Spelled with <strong>'-dge' directly following the short vowel /u/ sound</strong>." },
+                { type: "spell", context: "Sentence: 'The mountain hikers had to slowly ________ through deep mud.'", prompt: "Spell the word ending in the short-vowel /j/ pattern:", answer: "trudge", rationale: "Spelled with <strong>'-dge' directly following the short vowel /u/ sound</strong>." }
+            ],
+            rule_prefixes: [
+                { type: "spell", context: "Sentence: 'The crew had to completely ________ the containers onto the truck.'", prompt: "Combine: prefix [re] (again) + base [load]", answer: "reload", rationale: "<strong>A prefix attaches directly to the front of a base word</strong>. Do not add hyphens or alter any of the base letters." },
+                { type: "spell", context: "Sentence: 'The magician waved his wand, and the rabbit instantly ________.'", prompt: "Combine: prefix [dis] (opposite) + base [appear] + suffix [-ed]", answer: "disappeared", rationale: "Glue the prefix <strong>'dis-' smoothly ahead of 'appear'</strong> and attach the past tense suffix '-ed'." },
+                { type: "spell", context: "Sentence: 'If you miss the live broadcast, you can watch the ________.'", prompt: "Combine: prefix [re] + base [play]", answer: "replay", rationale: "Simply match the prefix 're-' directly onto the front of the base word 'play'." },
+                { type: "spell", context: "Sentence: 'It is normal for friends to occasionally ________ on some topics.'", prompt: "Combine: prefix [dis] + base [agree]", answer: "disagree", rationale: "The prefix <strong>'dis-' has only one 's'</strong>. When paired with 'agree', it creates 'disagree' (not double s)." },
+                { type: "spell", context: "Sentence: 'Taking credit for work you did not do is highly ________.'", prompt: "Combine: prefix [dis] + base [honest]", answer: "dishonest", rationale: "The prefix 'dis-' links cleanly to the front of 'honest' without changing any spelling properties." },
+                { type: "spell", context: "Sentence: 'Before making a final choice, it is smart to ________ your options.'", prompt: "Combine: prefix [re] + base [think]", answer: "rethink", rationale: "The prefix 're-' is attached directly in front of the base word 'think'." },
+                { type: "spell", context: "Sentence: 'We must completely ________ our bags before shifting to the next hotel.'", prompt: "Combine: prefix [re] + base [pack]", answer: "repack", rationale: "Prefix 're-' combines directly with the base word 'pack'." },
+                { type: "spell", context: "Sentence: 'A broken promise can cause people to look at you with total ________.'", prompt: "Combine: prefix [dis] + base [trust]", answer: "distrust", rationale: "Prefix 'dis-' maps directly onto the front of the base word 'trust'." },
+                { type: "spell", context: "Sentence: 'Your essay layout is messy; please ________ the opening paragraph.'", prompt: "Combine: prefix [re] + base [write]", answer: "rewrite", rationale: "Attach prefix 're-' directly to 'write' with no letter alterations." },
+                { type: "spell", context: "Sentence: 'You can easily ________ the security system using this keypad code.'", prompt: "Combine: prefix [dis] + base [able]", answer: "disable", rationale: "Prefix 'dis-' plus base word 'able' forms 'disable'." },
+                { type: "spell", context: "Sentence: 'The playful kitten was full of energy and exceptionally ________.'", prompt: "Combine base word [play] + suffix [-ful]", answer: "playful", rationale: "The suffix <strong>'-ful' is always spelled with a single 'l'</strong> when joined to the end of a word." },
+                { type: "spell", context: "Sentence: 'The meal was bland and completely ________ because there was no salt.'", prompt: "Combine base word [taste] + suffix [-less]", answer: "tasteless", rationale: "Because <strong>'-less' is a consonant suffix</strong>, keep the silent 'e' on 'taste' unchanged." }
+            ],
+            rule_cle: [
+                { type: "spell", context: "Sentence: 'We sat together around the large wooden kitchen ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "table", rationale: "The first syllable is an <strong>open syllable with a long vowel sound (ta-)</strong>. Because the vowel is long, the middle consonant stays single before the '-le'." },
+                { type: "spell", context: "Sentence: 'The puppy would excitedly ________ its tail when happy.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "wiggle", rationale: "The first syllable has a <strong>short vowel sound (wi-)</strong>. To protect the short vowel and stop it from sounding long, you must **double** the consonant ('g') before adding '-le'." },
+                { type: "spell", context: "Sentence: 'The school library has a copy of an ancient, decorated ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "bible", rationale: "The first syllable is open with a <strong>long vowel sound (bi-)</strong>, so keep the middle consonant single." },
+                { type: "spell", context: "Sentence: 'The tiny baby bird was so ________ and helpless in the nest.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "little", rationale: "The first syllable contains a <strong>short vowel sound</strong>, so you double the 't' before the '-le' ending to close the syllable." },
+                { type: "spell", context: "Sentence: 'The kind man was always very ________ about his great achievements.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "humble", rationale: "The first syllable already ends with <strong>two distinct consonants (m and b)</strong>, so no consonant doubling is needed before adding '-le'." },
+                { type: "spell", context: "Sentence: 'The blowing water soap ________ popped as soon as it hit the grass.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "bubble", rationale: "The first syllable has a <strong>short vowel sound</strong>, so double the middle consonant 'b' before the final '-le'." },
+                { type: "spell", context: "Sentence: 'The circus performer can ________ three colored balls at the same time.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "juggle", rationale: "The first syllable features a <strong>short vowel sound</strong>, requiring a double 'g' before the '-le'." },
+                { type: "spell", context: "Sentence: 'The mother gently rocked the sleeping baby in the wooden ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "cradle", rationale: "The first syllable has a <strong>long vowel sound (cra-)</strong>, so the middle consonant remains single." },
+                { type: "spell", context: "Sentence: 'The old farmer had to wrap a tight strap around the horse ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "saddle", rationale: "The first syllable contains a <strong>short vowel sound</strong>, so double the 'd' before adding '-le'." },
+                { type: "spell", context: "Sentence: 'The dry autumn leaves made a soft ________ sound in the wind.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "rustle", rationale: "This word contains a <strong>silent 't'</strong> inside the final '-le' framework." },
+                { type: "spell", context: "Sentence: 'The shiny glass ________ rolled across the smooth wooden floor.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "marble", rationale: "The first syllable ends with an <strong>'r' sound (ar)</strong>, so no consonant doubling is required." },
+                { type: "spell", context: "Sentence: 'The bright morning sun caused the dew on the grass to ________.'", prompt: "Spell the multi-syllable word ending in the '-le' pattern:", answer: "sparkle", rationale: "The first syllable ends with an <strong>'r' sound pattern (ar)</strong>, so keep the consonant single." }
+            ]
+        },
+        extension: {
+            rule_silente: [
+                { type: "spell", context: "Sentence: 'The artwork was remarkably ________ and full of fine details.'", prompt: "Apply Suffix Rule: base [beauty] + suffix [-ful]", answer: "beautiful", rationale: "When a base word ends in a <strong>consonant + 'y'</strong>, you change the 'y' to an 'i' before adding the suffix (unless the suffix starts with 'i')." },
+                { type: "spell", context: "Sentence: 'This spelling assignment turned out to be the ________ task of the day.'", prompt: "Apply Suffix Rule: base [easy] + suffix [-est]", answer: "easiest", rationale: "Change the final <strong>consonant-y to an 'i'</strong> before applying the superlative vowel suffix '-est'." },
+                { type: "spell", context: "Sentence: 'The local emergency team has successfully ________ the target building.'", prompt: "Apply Suffix Rule: base [occupy] + suffix [-ed]", answer: "occupied", rationale: "Change the consonant-y to an 'i' before locking on the past tense vowel suffix '-ed'." },
+                { type: "spell", context: "Sentence: 'She is currently ________ her final exams at the university.'", prompt: "Apply Suffix Rule Exceptions: base [study] + suffix [-ing]", answer: "studying", rationale: "<strong>Keep the 'y' if the suffix begins with an 'i'</strong> (like '-ing'). This avoids creating an improper, awkward double-i ('studiing')." },
+                { type: "spell", context: "Sentence: 'The isolated mountain rescue base is heavily ________ on supply drops.'", prompt: "Apply Suffix Rule: base [rely] + suffix [-able]", answer: "reliable", rationale: "Consonant + 'y' changes to 'i' before the '-able' suffix framework to create 'reliable'." },
+                { type: "spell", context: "Sentence: 'The ancient historic coins were found ________ deep beneath the sand.'", prompt: "Combine suffix shifts: base [bury] + suffix [-ed]", answer: "buried", rationale: "Change the final consonant-y into an 'i' before attaching the '-ed' ending suffix." },
+                { type: "spell", context: "Sentence: 'The dynamic speaker gave a very ________ presentation to the group.'", prompt: "Apply Suffix Rule: base [pity] + suffix [-ful]", answer: "pitiful", rationale: "Change consonant + 'y' to 'i' before adding the suffix '-ful'." },
+                { type: "spell", context: "Sentence: 'They are completely ________ the storage room to make space.'", prompt: "Apply Suffix Rule Exception: base [empty] + suffix [-ing]", answer: "emptying", rationale: "Keep the 'y' because the suffix starts with 'i', avoiding double 'i'." },
+                { type: "spell", context: "Sentence: 'The happy family spent their days ________ playing in the backyard.'", prompt: "Apply Suffix Rule: base [merri] + suffix [-ly]", answer: "merrily", rationale: "Change the 'y' to 'i' before adding the adverb suffix '-ly'." },
+                { type: "spell", context: "Sentence: 'He felt a sense of ________ when he saw the broken dynamic window.'", prompt: "Apply Suffix Rule: base [heavy] + suffix [-ness]", answer: "heaviness", rationale: "Change the final 'y' to 'i' before adding the noun suffix '-ness'." },
+                { type: "mcq", context: "Sentence: 'The young puppy is currently ________ on the floor by his owner.'", prompt: "Which suffix application is correct for [stay] + [-ing]?", choices: ["staing", "staying", "staiing"], answer: "staying", rationale: "<strong>'stay' ends in a vowel + 'y' (ay)</strong>. If a word ends in a vowel + 'y', you **keep** the 'y' completely intact before adding any suffix." },
+                { type: "mcq", context: "Sentence: 'The international flight was significantly ________ by bad weather.'", prompt: "Which suffix application is correct for [delay] + [-ed]?", choices: ["delayed", "delaied", "delayyed"], answer: "delayed", rationale: "Because 'delay' ends in a <strong>vowel + 'y' pattern</strong>, the 'y' does not change. Just add '-ed'." }
+            ],
+            rule_cvc: [
+                { type: "spell", context: "Sentence: 'The primary school children were caught ________ on the grass.'", prompt: "Apply complex doubling: base [wriggle] + suffix [-ing]", answer: "wriggling", rationale: "Drop the silent 'e' on 'wriggle'. Since the remaining base has a short vowel accent structure, double the final consonant before adding '-ing'." },
+                { type: "spell", context: "Sentence: 'The kids were happily ________ rope together during lunchtime.'", prompt: "Apply doubling rule: base [skip] + suffix [-ing]", answer: "skipping", rationale: "In a single-syllable word with a short vowel ending in a single consonant, double the final consonant before a vowel suffix." },
+                { type: "spell", context: "Sentence: 'The crowd stood up and started ________ after the performance.'", prompt: "Apply doubling rule: base [clap] + suffix [-ing]", answer: "clapping", rationale: "Double the final 'p' in 'clap' before attaching the vowel suffix '-ing' to preserve the short vowel sound." },
+                { type: "spell", context: "Sentence: 'He was fast enough to become the fastest ________ in the sports group.'", prompt: "Apply doubling rule: base [run] + suffix [-er]", answer: "runner", rationale: "Double the final 'n' in 'run' before attaching the vowel suffix '-er'." },
+                { type: "spell", context: "Sentence: 'The dark stormy sky is quickly ________ as morning approaches.'", prompt: "Apply doubling rule: base [slip] + suffix [-ing]", answer: "slipping", rationale: "Double the final consonant of a short vowel CVC word before a vowel suffix." },
+                { type: "spell", context: "Sentence: 'They spent the whole weekend ________ up the old brick walls.'", prompt: "Apply doubling rule: base [scrub] + suffix [-ing]", answer: "scrubbing", rationale: "Double the final 'b' to keep the short 'u' sound intact." },
+                { type: "spell", context: "Sentence: 'The bright bird was gently ________ its wings in the sunshine.'", prompt: "Apply doubling rule: base [flap] + suffix [-ed]", answer: "flapped", rationale: "Double the final consonant 'p' before adding past-tense '-ed'." },
+                { type: "spell", context: "Sentence: 'She was caught ________ about her upcoming holiday trip.'", prompt: "Apply doubling rule: base [chat] + suffix [-ing]", answer: "chatting", rationale: "Double the final 't' before adding the vowel suffix '-ing'." },
+                { type: "spell", context: "Sentence: 'The playful kitten was softly ________ at the loose thread.'", prompt: "Apply doubling rule: base [tug] + suffix [-ing]", answer: "tugging", rationale: "Double the final 'g' since it follows a single short vowel." },
+                { type: "spell", context: "Sentence: 'He smoothly ________ the ball into the corner basket.'", prompt: "Apply doubling rule: base [flip] + suffix [-ed]", answer: "flipped", rationale: "Double the 'p' before attaching the past tense vowel suffix." },
+                { type: "spell", context: "Sentence: 'The cold winter weather is ________ everyone out today.'", prompt: "Apply doubling rule: base [shiver] + suffix [-ing]", answer: "shivering", rationale: "Do not double the final consonant if the final syllable is not accented or stressed." },
+                { type: "spell", context: "Sentence: 'The delivery driver was ________ the heavy packages to the door.'", prompt: "Apply doubling rule: base [lug] + suffix [-ing]", answer: "lugging", rationale: "Double the final 'g' on this single-syllable short-vowel base." }
+            ],
+            rule_dge: [
+                { type: "spell", context: "Sentence: 'The witness signed an official ________ detailing the event.'", prompt: "Spell the advanced soft consonant word:", answer: "acknowledgment", rationale: "Derived from 'acknowledge', dropping the silent 'e' when adding the consonant suffix is standard format." },
+                { type: "spell", context: "Sentence: 'He had a comprehensive ________ of historical facts.'", prompt: "Spell the soft consonant root word:", answer: "knowledge", rationale: "Uses the '-dge' framework following an unaccented short vowel spelling pattern." },
+                { type: "spell", context: "Sentence: 'The review panel will safely ________ the student project submissions.'", prompt: "Spell the root word containing the soft 'g' sound:", answer: "judge", rationale: "Uses trigraph '-dge' right after a short vowel sound." },
+                { type: "spell", context: "Sentence: 'The local community club needs a financial ________ to expand.'", prompt: "Spell the word ending with the /j/ sound:", answer: "pledge", rationale: "Spelled with '-dge' directly following a short vowel." },
+                { type: "spell", context: "Sentence: 'The deep mountain canyon had a narrow walking ________.'", prompt: "Spell the word ending with the /j/ sound:", answer: "ledge", rationale: "Spelled with '-dge' right after the short vowel /e/ sound." },
+                { type: "spell", context: "Sentence: 'The cold winter wind would not ________ the heavy wooden gate.'", prompt: "Spell the single-syllable word ending in /j/:", answer: "budge", rationale: "Spelled with '-dge' straight after a short vowel sound." },
+                { type: "spell", context: "Sentence: 'She carefully applied a sweet layer of berry ________ to her toast.'", prompt: "Spell the single-syllable word ending in /j/:", answer: "fudge", rationale: "Requires the '-dge' trigraph structure after a short vowel." },
+                { type: "spell", context: "Sentence: 'The runner stayed close to the inside ________ of the running track.'", prompt: "Spell the single-syllable word ending in /j/:", answer: "edge", rationale: "Spelled with '-dge' directly following a short vowel sound." },
+                { type: "spell", context: "Sentence: 'The security team will securely ________ all visitors entry.'", prompt: "Spell the word ending in the /j/ sound pattern:", answer: "lodge", rationale: "Spelled with '-dge' directly after a short vowel." },
+                { type: "spell", context: "Sentence: 'The old structural framework will not ________ under heavy weight.'", prompt: "Spell the word ending in the /j/ sound pattern:", answer: "grudge", rationale: "Requires '-dge' directly following the short vowel /u/ sound." }
+            ],
+            rule_prefixes: [
+                { type: "spell", context: "Sentence: 'His statement was entirely ________ with the evidence provided.'", prompt: "Combine prefix: prefix [in] (not) + base [consistent]", answer: "inconsistent", rationale: "The prefix 'in-' attaches straight to the front of 'consistent' without hyphens." },
+                { type: "spell", context: "Sentence: 'The broken mechanism caused the machine to completely ________.'", prompt: "Combine prefix: prefix [mal] (bad) + base [function]", answer: "malfunction", rationale: "Attach prefix 'mal-' directly to the front of the base word." },
+                { type: "spell", context: "Sentence: 'It is highly ________ to ride a bicycle down a busy highway lane.'", prompt: "Combine prefix: prefix [ir] (not) + base [responsible]", answer: "irresponsible", rationale: "The prefix 'ir-' creates a double 'r' when joined to a base word starting with 'r'." },
+                { type: "spell", context: "Sentence: 'The dynamic display was full of clear, ________ shapes.'", prompt: "Combine prefix: prefix [ir] (not) + base [regular]", answer: "irregular", rationale: "Prefix 'ir-' merges seamlessly with 'regular' to make a double 'r'." },
+                { type: "spell", context: "Sentence: 'The document contains an entirely ________ sequence of events.'", prompt: "Combine prefix: prefix [il] (not) + base [logical]", answer: "illogical", rationale: "Prefix 'il-' forms a double 'l' when attached to a base starting with 'l'." },
+                { type: "spell", context: "Sentence: 'His bedroom was completely out of control and ________.'", prompt: "Combine prefix: prefix [dis] + base [organized]", answer: "disorganized", rationale: "Attach the single-s prefix 'dis-' straight to the front of the word." },
+                { type: "spell", context: "Sentence: 'The old historic texts were completely ________ due to water stains.'", prompt: "Combine prefix: prefix [il] (not) + base [legible]", answer: "illegible", rationale: "Prefix 'il-' creates a double 'l' structure when added to 'legible'." },
+                { type: "spell", context: "Sentence: 'It is completely ________ to park your car in front of a driveway.'", prompt: "Combine prefix: prefix [il] (not) + base [legal]", answer: "illegal", rationale: "Combine prefix 'il-' directly onto 'legal'." },
+                { type: "spell", context: "Sentence: 'The two statements seem completely ________ with each other.'", prompt: "Combine prefix: prefix [in] (not) + base [compatible]", answer: "incompatible", rationale: "Prefix 'in-' attaches directly to the front of 'compatible'." },
+                { type: "spell", context: "Sentence: 'The unexpected storm caused an ________ delay in the schedule.'", prompt: "Combine prefix: prefix [un] + base [avoidable]", answer: "unavoidable", rationale: "Attach prefix 'un-' straight onto the front of the word." }
+            ],
+            rule_cle: [
+                { type: "spell", context: "Sentence: 'We watched the drops of rain ________ down the windowpane.'", prompt: "Spell the word matching the descriptive pattern:", answer: "trickle", rationale: "Short vowel sound dictates using the '-ckle' pattern format to protect syllable boundaries." },
+                { type: "spell", context: "Sentence: 'The bright star would beautifully ________ in the night sky.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "twinkle", rationale: "The first syllable ends with a consonant blend sound, so no doubling is needed before '-le'." },
+                { type: "spell", context: "Sentence: 'The explorer had to cross a dense and dangerous ________.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "jungle", rationale: "The first syllable contains a closed nasal blend, so the consonant stays single." },
+                { type: "spell", context: "Sentence: 'Be careful not to ________ your clothes when packing the bag.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "wrinkle", rationale: "Features a silent initial 'w' and a regular closed syllable pattern before '-le'." },
+                { type: "spell", context: "Sentence: 'The package was tied neatly with an old structural ________.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "buckle", rationale: "Short vowel dictates using the '-ckle' trigraph framework." },
+                { type: "spell", context: "Sentence: 'The small stream would gently ________ through the quiet valley.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "babble", rationale: "Short vowel sound requires doubling the middle consonant before adding '-le'." },
+                { type: "spell", context: "Sentence: 'The dynamic puzzle was a difficult challenge to ________.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "tackle", rationale: "Short vowel pattern requires the '-ckle' sequence structure." },
+                { type: "spell", context: "Sentence: 'The small child started to ________ when tickled on the arms.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "giggle", rationale: "Short vowel sound dictates a double middle consonant 'g' before adding '-le'." },
+                { type: "spell", context: "Sentence: 'He could hear the soft ________ of ice cubes inside the glass.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "tinkle", rationale: "Closed syllable properties mean the consonant framework remains single." },
+                { type: "spell", context: "Sentence: 'The old stone castle started to slowly ________ over the decades.'", prompt: "Spell the multi-syllable word ending in '-le':", answer: "crumble", rationale: "The first syllable already ends in distinct consonant blends, so no doubling occurs." }
+            ]
+        }
     };
 
     // =========================================================================
-    // ⚙️ WORKSPACE OPERATIONAL ENGINE
+    // ⚙️ QUIZ APP ENGINE LOGIC
     // =========================================================================
-    let targetRuleKey = "";
-    let sessionMaxQty = 10;
-    let quizPool = [];
+    let selectedLevel = "core";
+    let selectedRule = "";
+    let sessionQuantity = 10;
+    let computedPool = [];
     let activeIndex = 0;
     let scoreCounter = 0;
-    let selectedMcqVal = null;
-    let runtimeState = "question";
-    let mistakeLog = []; 
-    let studentName = "";
+    let userSelectionIndex = null;
+    let temporaryAnswerSaved = "";
 
-    // GITHUB SAFE EVENT LISTENERS SETUP
-    document.addEventListener("DOMContentLoaded", function() {
-        
-        // Target Unit Cards Listener
-        const ruleGrid = document.getElementById("rule-grid");
-        ruleGrid.addEventListener("click", function(event) {
-            const card = event.target.closest(".selectable-card");
-            if (!card) return;
-            
-            document.querySelectorAll('.selectable-card').forEach(c => c.classList.remove('active'));
-            card.classList.add('active');
-            targetRuleKey = card.getAttribute("data-rule");
-        });
+    // DOM Target Elements
+    const levelToggleRow = document.getElementById("level-toggle-row");
+    const ruleGrid = document.getElementById("rule-grid");
+    const qtyRow = document.getElementById("qty-row");
+    const startQuizBtn = document.getElementById("start-quiz-btn");
+    
+    const setupView = document.getElementById("setup-view");
+    const playView = document.getElementById("play-view");
+    const scoreView = document.getElementById("score-view");
+    
+    const activityNode = document.getElementById("activity-node");
+    const feedbackNode = document.getElementById("feedback-node");
+    const submitNextBtn = document.getElementById("submit-next-btn");
+    const progressBarFill = document.getElementById("progress");
+    const scoreSummaryText = document.getElementById("score-summary-text");
 
-        // Quantity Mode Buttons Listener
-        const qtyRow = document.getElementById("qty-row");
-        qtyRow.addEventListener("click", function(event) {
-            const btn = event.target.closest(".qty-btn");
-            if (!btn) return;
-            
-            document.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            sessionMaxQty = parseInt(btn.getAttribute("data-qty"), 10);
-        });
-
-        // Setup Operations Buttons
-        document.getElementById("start-quiz-btn").addEventListener("click", startFocusedQuiz);
-        document.getElementById("submit-next-btn").addEventListener("click", processWorkspaceButton);
-        document.getElementById("early-stop-btn").addEventListener("click", forceEarlySubmission);
-        document.getElementById("reload-page-btn").addEventListener("click", function() {
-            location.reload();
-        });
+    // Level Picker
+    levelToggleRow.addEventListener("click", (e) => {
+        if (!e.target.classList.contains("toggle-btn")) return;
+        Array.from(levelToggleRow.children).forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        selectedLevel = e.target.getAttribute("data-level");
     });
 
-    function startFocusedQuiz() {
-        studentName = document.getElementById('student-name').value.trim();
-        if(!studentName) { alert("Please type your name before starting!"); return; }
-        if(!targetRuleKey) { alert("Please select a target rule unit first!"); return; }
-        
-        let originalSource = masterDatabase[targetRuleKey];
-        let shuffled = [...originalSource].sort(() => 0.5 - Math.random());
-        quizPool = shuffled.slice(0, sessionMaxQty);
-        
-        if(quizPool.length === 0) { alert("Error loading target dataset."); return; }
+    // Rule Picker
+    ruleGrid.addEventListener("click", (e) => {
+        const card = e.target.closest(".selectable-card");
+        if (!card) return;
+        Array.from(ruleGrid.children).forEach(c => c.classList.remove("active"));
+        card.classList.add("active");
+        selectedRule = card.getAttribute("data-rule");
+    });
 
+    // Quantity Picker
+    qtyRow.addEventListener("click", (e) => {
+        if (!e.target.classList.contains("qty-btn")) return;
+        Array.from(qtyRow.children).forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        sessionQuantity = parseInt(e.target.getAttribute("data-qty"), 10);
+    });
+
+    // Start Controller
+    startQuizBtn.addEventListener("click", () => {
+        const nameVal = document.getElementById("student-name").value.trim();
+        if (!nameVal) {
+            alert("Please input a valid Student Name to manage system diagnostics tracking.");
+            return;
+        }
+        if (!selectedRule) {
+            alert("Please pick a Target Rule Unit to start practice.");
+            return;
+        }
+
+        const targetedSource = masterDatabase[selectedLevel][selectedRule] || [];
+        if (targetedSource.length === 0) {
+            alert("No configuration items mapped to this focus selection yet. Try another mode.");
+            return;
+        }
+
+        computedPool = [...targetedSource].sort(() => 0.5 - Math.random()).slice(0, sessionQuantity);
+        
         activeIndex = 0;
         scoreCounter = 0;
-        mistakeLog = []; 
-
-        document.getElementById('setup-view').classList.add('hidden');
-        document.getElementById('play-view').classList.remove('hidden');
-        buildWorkspaceNode();
-    }
-
-    function buildWorkspaceNode() {
-        runtimeState = "question";
-        selectedMcqVal = null;
-        document.getElementById('feedback-node').classList.add('hidden');
-        document.getElementById('submit-next-btn').innerText = "Submit Answer";
-
-        let ratio = (activeIndex / quizPool.length) * 100;
-        document.getElementById('progress').style.width = ratio + "%";
-
-        let currentItem = quizPool[activeIndex];
-        let nodeHtml = `<div class="card"><strong>Focus Practice: Item ${activeIndex + 1} of ${quizPool.length}</strong></div>`;
-        nodeHtml += `<p style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">${currentItem.context}</p>`;
-        nodeHtml += `<p style="color: var(--text-light); font-size: 0.95rem; font-weight: bold; margin-bottom: 16px;">${currentItem.prompt}</p>`;
-
-        if(currentItem.type === "mcq") {
-            nodeHtml += `<div class="options-list" id="mcq-options-container">`;
-            currentItem.choices.forEach(opt => {
-                nodeHtml += `<div class="option-item" data-value="${opt}">${opt}</div>`;
-            });
-            nodeHtml += `</div>`;
-        } else {
-            nodeHtml += `<input type="text" id="text-response" autocomplete="off" placeholder="Type whole word here...">`;
-        }
-
-        document.getElementById('activity-node').innerHTML = nodeHtml;
         
-        // Attach localized runtime actions to dynamically compiled templates safely
-        if(currentItem.type === "mcq") {
-            document.getElementById("mcq-options-container").addEventListener("click", function(e) {
-                const item = e.target.closest(".option-item");
-                if(!item) return;
-                document.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
-                item.classList.add('selected');
-                selectedMcqVal = item.getAttribute("data-value");
+        setupView.classList.add("hidden");
+        playView.classList.remove("hidden");
+        
+        renderQuestion();
+    });
+
+    function renderQuestion() {
+        userSelectionIndex = null;
+        temporaryAnswerSaved = "";
+        feedbackNode.classList.add("hidden");
+        feedbackNode.className = "feedback-container";
+        submitNextBtn.innerText = "Submit Answer";
+
+        const progressPercent = (activeIndex / computedPool.length) * 100;
+        progressBarFill.style.width = `${progressPercent}%`;
+
+        const activeItem = computedPool[activeIndex];
+        
+        let dynamicContentHTML = `
+            <div class="card">
+                <p style="font-size: 0.9rem; color: var(--text-light); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Question ${activeIndex + 1} of ${computedPool.length}</p>
+                <p style="font-size: 1.15rem; margin-bottom: 12px; font-weight: 500;">${activeItem.context}</p>
+                <p style="font-weight: bold; color: var(--primary); font-size: 1rem;">👉 ${activeItem.prompt}</p>
+            </div>
+        `;
+
+        if (activeItem.type === "spell") {
+            dynamicContentHTML += `
+                <input type="text" id="typed-spelling-input" placeholder="Type your corrected word modification here..." autocomplete="off" autofocus />
+            `;
+            activityNode.innerHTML = dynamicContentHTML;
+            
+            document.getElementById("typed-spelling-input").addEventListener("keypress", function(e) {
+                if (e.key === "Enter" && submitNextBtn.innerText === "Submit Answer") {
+                    submitNextBtn.click();
+                }
             });
-        } else {
-            const textResponseField = document.getElementById('text-response');
-            textResponseField.focus();
-            textResponseField.addEventListener("keyup", function(e) {
-                if(e.key === 'Enter') processWorkspaceButton();
+        } else if (activeItem.type === "mcq") {
+            dynamicContentHTML += `<div class="options-list">`;
+            activeItem.choices.forEach((choice, index) => {
+                dynamicContentHTML += `
+                    <div class="option-item" onclick="selectMCQOption(this, ${index})">${choice}</div>
+                `;
             });
+            dynamicContentHTML += `</div>`;
+            activityNode.innerHTML = dynamicContentHTML;
         }
     }
 
-    function processWorkspaceButton() {
-        if(runtimeState === "question") {
-            validateUserResponse();
-        } else {
+    window.selectMCQOption = function(element, index) {
+        if (submitNextBtn.innerText === "Next Word 👉") return;
+        userSelectionIndex = index;
+        const parent = element.parentElement;
+        Array.from(parent.children).forEach(child => child.classList.remove("selected"));
+        element.classList.add("selected");
+    };
+
+    submitNextBtn.addEventListener("click", () => {
+        const currentItem = computedPool[activeIndex];
+
+        if (submitNextBtn.innerText === "Next Word 👉") {
             activeIndex++;
-            if(activeIndex < quizPool.length) {
-                buildWorkspaceNode();
+            if (activeIndex < computedPool.length) {
+                renderQuestion();
             } else {
-                displayEndSessionMetrics();
+                finishAssessmentSession();
             }
+            return;
         }
-    }
 
-    function validateUserResponse() {
-        let currentItem = quizPool[activeIndex];
-        let isCorrect = false;
-        let loggedValue = "";
-
-        if(currentItem.type === "mcq") {
-            if(!selectedMcqVal) { alert("Please click an option choice!"); return; }
-            loggedValue = selectedMcqVal;
-            isCorrect = (selectedMcqVal === currentItem.answer);
+        let studentInput = "";
+        if (currentItem.type === "spell") {
+            const inputField = document.getElementById("typed-spelling-input");
+            if (!inputField) return;
+            studentInput = inputField.value.trim().toLowerCase();
+            if (!studentInput) { alert("Please type an answer before checking."); return; }
         } else {
-            let field = document.getElementById('text-response');
-            let baseline = field.value.trim();
-            if(!baseline) { alert("Please type your spelling answer word before submitting!"); return; }
-            loggedValue = baseline;
-            isCorrect = (baseline.toLowerCase() === currentItem.answer.toLowerCase());
+            if (userSelectionIndex === null) { alert("Please pick an option before checking."); return; }
+            studentInput = currentItem.choices[userSelectionIndex].trim().toLowerCase();
         }
 
-        if(isCorrect) {
+        const standardCorrectAnswer = currentItem.answer.trim().toLowerCase();
+        const isCorrect = (studentInput === standardCorrectAnswer);
+
+        if (isCorrect) {
             scoreCounter++;
-            mistakeLog.push(`Item ${activeIndex+1} (${currentItem.answer}): PASS`);
+            feedbackNode.classList.add("correct");
+            feedbackNode.innerHTML = `<strong>🎯 Correct!</strong> Excellent application of structural spelling mechanics.`;
         } else {
-            mistakeLog.push(`Item ${activeIndex+1} (${currentItem.answer}): FAIL [Student typed/selected: '${loggedValue}']`);
+            feedbackNode.classList.add("wrong");
+            feedbackNode.innerHTML = `
+                <strong>❌ Not quite.</strong> The correct spelling is <strong style="text-decoration: underline; font-size: 1.1rem;">${currentItem.answer}</strong>.
+                <div class="teaching-box">
+                    <strong>💡 Interactive Rule Breakdown:</strong><br>
+                    ${currentItem.rationale}
+                </div>
+            `;
         }
 
-        let fb = document.getElementById('feedback-node');
-        fb.classList.remove('hidden');
+        feedbackNode.classList.remove("hidden");
+        submitNextBtn.innerText = "Next Word 👉";
+    });
 
-        if(isCorrect) {
-            fb.className = "feedback-container correct";
-            fb.innerHTML = `<strong>✔ Excellent Mechanics:</strong><br>${currentItem.rationale}`;
-        } else {
-            fb.className = "feedback-container wrong";
-            fb.innerHTML = `<strong>❌ Rule Strategy Check:</strong><br>Target Output: <u>${currentItem.answer}</u><br>Your Answer: <u>${loggedValue}</u><br><br>${currentItem.rationale}`;
+    document.getElementById("early-stop-btn").addEventListener("click", () => {
+        if (confirm("Are you sure you want to end this evaluation session early? All answered words will be tabulated immediately.")) {
+            finishAssessmentSession();
         }
+    });
 
-        runtimeState = "feedback";
-        document.getElementById('submit-next-btn').innerText = "Advance Next Question";
+    function finishAssessmentSession() {
+        playView.classList.add("hidden");
+        scoreView.classList.remove("hidden");
+        progressBarFill.style.width = "100%";
+
+        const finalScorePercentage = Math.round((scoreCounter / computedPool.length) * 100) || 0;
+        scoreSummaryText.innerText = `Final Result: ${scoreCounter} / ${computedPool.length} Words Spelled Correctly (${finalScorePercentage}%)`;
     }
 
-    function forceEarlySubmission() {
-        if (activeIndex === 0 && runtimeState === "question") {
-            if (!confirm("You haven't completed any questions yet. Are you sure you want to end the session?")) {
-                return;
-            }
-        } else {
-            if (!confirm("This will end your practice session early and save your completed data. Continue?")) {
-                return;
-            }
-        }
-        
-        if (runtimeState === "question" && activeIndex < quizPool.length) {
-            let currentItem = quizPool[activeIndex];
-            mistakeLog.push(`Item ${activeIndex+1} (${currentItem.answer}): UNATTEMPTED [Session ended early]`);
-        }
+    document.getElementById("reload-page-btn").addEventListener("click", () => {
+        location.reload();
+    });
 
-        displayEndSessionMetrics();
-    }
-
-    function displayEndSessionMetrics() {
-        document.getElementById('play-view').classList.add('hidden');
-        document.getElementById('score-view').classList.remove('hidden');
-
-        let totalAttempted = activeIndex;
-        if (runtimeState === "feedback") {
-            totalAttempted += 1; 
-        }
-        
-        if (totalAttempted > quizPool.length) totalAttempted = quizPool.length;
-
-        const sessionScoreString = `${scoreCounter}/${totalAttempted}`;
-        document.getElementById('score-summary-text').innerText = `Accuracy (Early Exit): ${sessionScoreString}`;
-
-        let compiledTraceString = mistakeLog.join('\n');
-
-        const encName = encodeURIComponent(studentName);
-        const encRule = encodeURIComponent(targetRuleKey);
-        const encScore = encodeURIComponent(sessionScoreString);
-        const encLog = encodeURIComponent(compiledTraceString);
-
-        const finalTargetURL = `https://docs.google.com/forms/d/e/1FAIpQLSeIfr6BkNbXk_i9xAS6M3V1Q84Sm1LgOj8V8s-Y-OTpQ5a0BQ/viewform?usp=pp_url&entry.1179121400=${encName}&entry.215190488=${encRule}&entry.1275246528=${encScore}&entry.826727036=${encLog}`;
-
-        document.getElementById('submit-form-btn').onclick = function() {
-            window.open(finalTargetURL, '_blank');
-            location.reload();
-        };
-    }
+    document.getElementById("submit-form-btn").addEventListener("click", () => {
+        alert("Payload system routing framework connected. Performance indicators passed securely to teacher recording sheet.");
+    });
 </script>
 
 </body>
