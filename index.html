@@ -69,7 +69,7 @@
 
         .selectable-card {
             border: 2px solid var(--border);
-            padding: 14px;
+            padding: 18px 14px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
@@ -153,7 +153,6 @@
             border-radius: 4px;
         }
 
-        /* 🌟 STUDENT-FRIENDLY VISUAL BLOCKS */
         .word-builder-container {
             background: #ffffff;
             border: 2px dashed #cbd5e1;
@@ -174,23 +173,9 @@
             display: inline-block;
         }
 
-        .component-tag.base {
-            background-color: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #bfdbfe;
-        }
-
-        .component-tag.modifier {
-            background-color: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-
-        .math-sign {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #94a3b8;
-        }
+        .component-tag.base { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .component-tag.modifier { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .math-sign { font-size: 1.25rem; font-weight: 800; color: #94a3b8; }
 
         .hidden { display: none !important; }
 
@@ -265,10 +250,7 @@
             gap: 6px;
         }
 
-        button.stop-btn:hover {
-            background-color: var(--danger);
-            color: white;
-        }
+        button.stop-btn:hover { background-color: var(--danger); color: white; }
     </style>
 </head>
 <body>
@@ -347,9 +329,6 @@
 </div>
 
 <script>
-    // =========================================================================
-    // 📝 ROBUST DATABASE: CLEAN STRUCTURAL SEGREGATION FOR DYNAMIC VISUAL GENERATION
-    // =========================================================================
     const masterDatabase = {
         core: {
             rule_silente: [
@@ -425,9 +404,6 @@
         }
     }
 
-    // =========================================================================
-    // ⚙️ QUIZ APP ENGINE LOGIC
-    // =========================================================================
     let selectedLevel = "core";
     let selectedRule = "";
     let sessionQuantity = 10;
